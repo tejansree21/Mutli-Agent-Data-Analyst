@@ -1,23 +1,10 @@
-from dotenv import load_dotenv
-load_dotenv()
-
-from fastapi import FastAPI, UploadFile, File, Form
-from fastapi.middleware.cors import CORSMiddleware
-import pandas as pd
-import io
-from crew import run_pipeline
-from crewai import Crew, LLM
+from crewai import Crew
 from agents.profiler import get_profiler_agent, get_profiler_task
 from agents.cleaner import get_cleaner_agent, get_cleaner_task
 from agents.analyst import get_analyst_agent, get_analyst_task, parse_code_from_response, execute_code
 from agents.reporter import get_reporter_agent, get_reporter_task
+from llm.provider import get_llm
 import pandas as pd
-
-def get_llm():
-    return LLM(
-        model="ollama/llama3.1:8b",
-        base_url="http://localhost:11434"
-    )
 
 def run_pipeline(df: pd.DataFrame, question: str):
     llm = get_llm()
