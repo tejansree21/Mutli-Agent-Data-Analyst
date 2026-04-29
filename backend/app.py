@@ -27,5 +27,9 @@ async def analyze(file: UploadFile = File(...), question: str = Form(...)):
         "rows": result["cleaned_df"].shape[0],
         "columns": result["cleaned_df"].shape[1],
         "column_names": result["cleaned_df"].columns.tolist(),
-        "question": result["question"]
+        "question": result["question"],
+        "code": result["code"],
+        "analysis_output": result["analysis_output"],
+        "charts": result["charts"],
+        "code_error": result["code_error"]
     }

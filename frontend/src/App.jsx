@@ -7,7 +7,7 @@ function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState("analysis");
 
   const handleSubmit = async () => {
     if (!file || !question.trim()) {
@@ -29,6 +29,7 @@ function App() {
         formData
       );
       setResult(response.data);
+      setActiveTab("analysis");
     } catch (err) {
       setError("Something went wrong. Is the backend running?");
       console.error(err);
@@ -38,6 +39,8 @@ function App() {
   };
 
   const tabs = [
+    { id: "analysis", label: "Analysis" },
+    { id: "code", label: "Code" },
     { id: "profile", label: "Data Profile" },
     { id: "cleaning", label: "Cleaning Report" },
   ];
@@ -81,7 +84,7 @@ function App() {
 
       {loading && (
         <div style={{ marginTop: 16, color: "#888" }}>
-          Running Profiler and Cleaner agents... this may take 30-60 seconds.
+          Running Profiler → Cleaner → Analyst agents... this may take 1-2 minutes.
         </div>
       )}
 
@@ -94,7 +97,7 @@ function App() {
             </span>
           </div>
 
-          <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+          <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -113,19 +116,96 @@ function App() {
             ))}
           </div>
 
-          <div
-            style={{
+          {activeTab === "analysis" && (
+            <div>
+              {result.code_error && (
+                <div style={{
+                  background: "#fee",
+                  padding: 12,
+                  borderRadius: 8,
+                  marginBottom: 12,
+                  color: "#c00"
+                }}>
+                  Code execution error: {result.code_error}
+                </div>
+              )}
+
+              {result.analysis_output && (
+                <div style={{
+                  background: "#f5f5f5",
+                  padding: 16,
+                  borderRadius: 8,
+                  whiteSpace: "pre-wrap",
+                  fontFamily: "monospace",
+                  marginBottom: 16
+                }}>
+                  {result.analysis_output}
+                </div>
+              )}
+
+              {result.charts && result.charts.map((chart, i) => (
+                <img
+                  key={i}
+                  src={`data:image/png;base64,${chart}`}
+                  alt={`Chart ${i + 1}`}
+                  style={{
+                    maxWidth: "100%",
+                    borderRadius: 8,
+                    marginBottom: 12,
+                    border: "1px solid #ddd"
+                  }}
+                />
+              ))}
+
+              {!result.analysis_output && !result.charts?.length && !result.code_error && (
+                <div style={{ color: "#888", padding: 16 }}>
+                  No output generated. Try rephrasing your question.
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "code" && (
+            <div style={{
+              background: "#1e1e1e",
+              color: "#d4d4d4",
+              padding: 16,
+              borderRadius: 8,
+              whiteSpace: "pre-wrap",
+              fontFamily: "monospace",
+              fontSize: 13,
+              overflow: "auto",
+              maxHeight: 500
+            }}>
+              {result.code || "No code generated."}
+            </div>
+          )}
+
+          {activeTab === "profile" && (
+            <div style={{
               background: "#f5f5f5",
               padding: 16,
               borderRadius: 8,
               whiteSpace: "pre-wrap",
               maxHeight: 500,
-              overflow: "auto",
-            }}
-          >
-            {activeTab === "profile" && result.profile_report}
-            {activeTab === "cleaning" && result.cleaning_report}
-          </div>
+              overflow: "auto"
+            }}>
+              {result.profile_report}
+            </div>
+          )}
+
+          {activeTab === "cleaning" && (
+            <div style={{
+              background: "#f5f5f5",
+              padding: 16,
+              borderRadius: 8,
+              whiteSpace: "pre-wrap",
+              maxHeight: 500,
+              overflow: "auto"
+            }}>
+              {result.cleaning_report}
+            </div>
+          )}
         </div>
       )}
     </div>
