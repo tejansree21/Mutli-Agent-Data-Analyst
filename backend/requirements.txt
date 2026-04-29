@@ -1,9 +1,8 @@
-fastapi
-uvicorn
-python-multipart
-python-dotenv
-ollama
-pandas
-matplotlib
-crewai
+fastapi==0.115.0
+uvicorn==0.30.0
+python-multipart==0.0.12
+python-dotenv==1.0.1
+pandas==2.2.3
+matplotlib==3.9.2
+crewai==1.14.3
 litellm
