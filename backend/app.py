@@ -31,5 +31,6 @@ async def analyze(file: UploadFile = File(...), question: str = Form(...)):
         "code": result["code"],
         "analysis_output": result["analysis_output"],
         "charts": result["charts"],
-        "code_error": result["code_error"]
+        "code_error": result["code_error"],
+        "summary_report": result["summary_report"]
     }

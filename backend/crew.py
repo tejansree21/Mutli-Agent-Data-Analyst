@@ -2,6 +2,7 @@ from crewai import Crew, LLM
 from agents.profiler import get_profiler_agent, get_profiler_task
 from agents.cleaner import get_cleaner_agent, get_cleaner_task
 from agents.analyst import get_analyst_agent, get_analyst_task, parse_code_from_response, execute_code
+from agents.reporter import get_reporter_agent, get_reporter_task
 import pandas as pd
 
 def get_llm():
@@ -52,11 +53,10 @@ def run_pipeline(df: pd.DataFrame, question: str):
     )
     analyst_result = analyst_crew.kickoff()
 
-    # Parse and execute the generated code
     code = parse_code_from_response(str(analyst_result))
     execution_result = execute_code(code, cleaned_df)
 
-    # If code failed, try once more with the error message
+    # Retry once if code failed
     if not execution_result["success"]:
         retry_task = get_analyst_task(
             analyst_agent, cleaned_df,
@@ -72,6 +72,26 @@ def run_pipeline(df: pd.DataFrame, question: str):
         code = parse_code_from_response(str(retry_result))
         execution_result = execute_code(code, cleaned_df)
 
+    # Step 4: Report
+    reporter_agent = get_reporter_agent(llm)
+    reporter_task = get_reporter_task(
+        reporter_agent,
+        question,
+        execution_result["output"],
+        code,
+        profile_report,
+        cleaning_report,
+        len(execution_result["charts"]) > 0
+    )
+
+    reporter_crew = Crew(
+        agents=[reporter_agent],
+        tasks=[reporter_task],
+        verbose=True
+    )
+    reporter_result = reporter_crew.kickoff()
+    summary_report = str(reporter_result)
+
     return {
         "profile_report": profile_report,
         "cleaning_report": cleaning_report,
@@ -81,5 +101,6 @@ def run_pipeline(df: pd.DataFrame, question: str):
         "code": code,
         "analysis_output": execution_result["output"],
         "charts": execution_result["charts"],
-        "code_error": execution_result["error"]
+        "code_error": execution_result["error"],
+        "summary_report": summary_report
     }
