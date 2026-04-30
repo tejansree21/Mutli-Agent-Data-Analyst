@@ -41,7 +41,7 @@ function App() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"}/analyze`,
+        "http://127.0.0.1:8000/analyze",
         formData,
         { timeout: 300000 }
       );
