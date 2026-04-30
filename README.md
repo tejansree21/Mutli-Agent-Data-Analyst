@@ -4,12 +4,6 @@ A multi-agent AI system that profiles, cleans, analyzes, and reports on any CSV 
 
 Upload a CSV, ask a question in plain English, and four specialized AI agents collaborate to deliver insights, visualizations, and a professional report — automatically.
 
-## Demo
-
-[Watch the demo video](link-to-your-video)
-
-![App Screenshot](screenshot.png)
-
 ## How It Works
 
 The system uses four AI agents orchestrated with CrewAI, each with a specific role:
@@ -20,7 +14,6 @@ The system uses four AI agents orchestrated with CrewAI, each with a specific ro
 | Cleaner | Data Engineer | Handles missing values, fixes types, removes duplicates |
 | Analyst | Senior Data Analyst | Writes and executes Python code to answer your question |
 | Reporter | BI Report Writer | Summarizes findings into a professional markdown report |
-
 
 ## Features
 
@@ -87,6 +80,10 @@ npm run dev
 ### Using Gemini (cloud) instead of Ollama
 
 Create `backend/.env`:
+```
+LLM_PROVIDER=gemini
+GEMINI_API_KEY=your_key_here
+```
 
 Get a free API key at [aistudio.google.com](https://aistudio.google.com/apikey)
 
@@ -99,6 +96,8 @@ Get a free API key at [aistudio.google.com](https://aistudio.google.com/apikey)
 - "Find any outliers in the dataset"
 
 ## Architecture
+
+```
 frontend/          → React + Vite UI
 backend/
 ├── app.py         → FastAPI server
@@ -111,6 +110,7 @@ backend/
 ├── llm/
 │   └── provider.py → Ollama/Gemini switcher
 └── tools/          → pandas/matplotlib helpers
+```
 
 ## Limitations
 
@@ -121,7 +121,7 @@ backend/
 
 ## Built By
 
-**Tejan Sree** — [LinkedIn](your-linkedin) | [Portfolio](your-portfolio-url)
+**Tejan Sree** — [LinkedIn](https://www.linkedin.com/in/tejan-challa)
 
 ## License
 
